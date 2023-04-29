@@ -19,7 +19,6 @@ const port = process.env.PORT || 3002;
  * Middlewares
  */
 
-// Logging
 //app.use(morgan('combined'))
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
