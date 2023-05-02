@@ -5,14 +5,14 @@ const express = require('express')
 require("dotenv").config();
 const morgan = require('morgan')
 var cors = require("cors");
-const userRouter = require("./routes/user.router")
+const ticektAgentRouter = require("./routes/ticketsAgent.router")
 const errorHandler = require("./middlewares/errorHandler");
 
 /**
  * Instances
  */
 const app = express()
-const USERS_ROUTER = "/api/users"
+const TICKET_AGENT_ROUTER = "/api/ticket-agent"
 const port = process.env.PORT || 3002;
 
 /**
@@ -30,7 +30,7 @@ app.use(errorHandler)
 /**
  * Routes
  */
-app.use(USERS_ROUTER,userRouter)
+app.use(TICKET_AGENT_ROUTER,ticektAgentRouter)
 
 
 app.get('/', (req, res) => {
@@ -38,5 +38,5 @@ app.get('/', (req, res) => {
 })
 
 app.listen(port, () => {
-  console.log(`Users' Server listening on port ${port}`)
+  console.log(`Ticket Agent' Server listening on port ${port}`)
 })
