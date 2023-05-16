@@ -45,31 +45,45 @@ async function getAllRecords(path) {
 
 // Function to get all approved tickets by event Id
 async function getAttendanceWithEventId(paramsEventId) {
+
     const ticketsRef = ref(database, "Tickets");
+
     const ticketsSnapshot = await get(ticketsRef);
-  
+
+
+
+
     const tickets = [];
+
     if (ticketsSnapshot.exists()) {
         const ticketPromises = [];
         ticketsSnapshot.forEach((ticketChild) => {
             const ticketData = ticketChild.val();
             const eventId = ticketData.eventId;
-            if(paramsEventId == eventId && ticketData.status==="Approved"){
-                const eventPromise = readRecord(`Events/${eventId}`).then((eventRecord) => {
+            if (paramsEventId === eventId && ticketData.status === "Approved") {
+                const eventPromise = readRecord(`Events/${eventId}`).then(async (eventRecord) => {
                     if (eventRecord) {
                         ticketData.eventDetails = eventRecord;
+                        const userId = ticketData.userId;
+                        const userPromise = await readRecord(`Users/${userId}`).then(async (userRecord) => {
+                            if (userRecord) {
+                                ticketData.userName = userRecord.fullName;
+                            }
+                        });
+                        ticketPromises.push(userPromise);
                         tickets.push(ticketData);
                     }
                 });
                 ticketPromises.push(eventPromise);
             }
-            
         });
         await Promise.all(ticketPromises);
     }
     return tickets;
-  }
-  
+
+}
+
+
 
 
 module.exports = {
