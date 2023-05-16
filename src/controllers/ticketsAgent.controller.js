@@ -28,7 +28,10 @@ const getAttendenaceByEventId = async (req, res, next) => {
         const eventRecord = await readRecord(event);
 
         if (!eventRecord) {
-            throw new createError[404]("Event is not found");
+            return res.status(404).json({
+                status: 404,
+                message: "Event not found"
+            });
         }
 
         const tickets = await getAttendanceWithEventId(eventId);
@@ -92,7 +95,10 @@ const approveAttendant = async (req, res, next) => {
         const ticketRecord = await readRecord(ticketPath);
 
         if (!ticketRecord) {
-            throw new createError[404]("Ticket not found");
+            return res.status(404).json({
+                status: 404,
+                message: "Ticket not found"
+            });
         }
 
         /**
@@ -122,9 +128,10 @@ const test = async (req, res,next) => {
 
     try {
         if (0) {
-            throw new createError[422](
-                "Error no userId/userDetails not found!"
-            );
+            return res.status(422).json({
+                status: 422,
+                message: "Error no userId/userDetails not found!"
+            });
         }
 
         const response = {

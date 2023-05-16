@@ -68,6 +68,9 @@ async function getAttendanceWithEventId(paramsEventId) {
                         const userPromise = await readRecord(`Users/${userId}`).then(async (userRecord) => {
                             if (userRecord) {
                                 ticketData.userName = userRecord.fullName;
+                                ticketData.email = userRecord.email;
+                                ticketData.mobileNo = userRecord.mobileNo;
+
                             }
                         });
                         ticketPromises.push(userPromise);
