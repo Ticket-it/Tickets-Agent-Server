@@ -7,7 +7,9 @@ const {
     readRecord,
     getAttendanceWithEventId,
     getAttendantDetails,
-    updateRecord
+    updateRecord,
+    getHistoryById
+
 } = require('../../utils/CRUD')
 
 /**
@@ -17,10 +19,8 @@ const {
  * @param {*} next
  */
 const getAttendenaceByEventId = async (req, res, next) => {
-
     try {
         const eventId = req.params.eventId;
-
         /**
          * Check if event does not exists
          */
@@ -35,7 +35,6 @@ const getAttendenaceByEventId = async (req, res, next) => {
         }
 
         const tickets = await getAttendanceWithEventId(eventId);
-
         res.status(200).send(tickets);
     } catch (error) {
         console.error(error);
@@ -154,9 +153,47 @@ const test = async (req, res,next) => {
     }
 };
 
+
+/**
+ * Function to get history
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ */
+ const getHistory = async (req, res, next) => {
+    try {
+
+        const userId = req.params.userId;
+
+        /**
+         * Check if user does not exists
+         */
+        const userPath = `Users/${userId}`;
+        const userRecord = await readRecord(userPath);
+
+        if (!userRecord) {
+            return res.status(404).json({
+                status: 404,
+                message: "Error, User not found"
+              });
+        }
+
+        const history=await getHistoryById(userId);        
+    
+        return res.status(200).send({
+            history
+        });
+
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+};
+
 module.exports = {
     test,
     getAttendenaceByEventId,
     getAttendantDetailsByTicketId,
-    approveAttendant
+    approveAttendant,
+    getHistory
 };

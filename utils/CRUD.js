@@ -45,14 +45,8 @@ async function getAllRecords(path) {
 
 // Function to get all approved tickets by event Id
 async function getAttendanceWithEventId(paramsEventId) {
-
     const ticketsRef = ref(database, "Tickets");
-
     const ticketsSnapshot = await get(ticketsRef);
-
-
-
-
     const tickets = [];
 
     if (ticketsSnapshot.exists()) {
@@ -70,6 +64,7 @@ async function getAttendanceWithEventId(paramsEventId) {
                                 ticketData.userName = userRecord.fullName;
                                 ticketData.email = userRecord.email;
                                 ticketData.mobileNo = userRecord.mobileNo;
+                                ticketData.userId = userId; 
 
                             }
                         });
@@ -86,6 +81,37 @@ async function getAttendanceWithEventId(paramsEventId) {
 
 }
 
+// Function to get all events by event type id and filter events by date and time
+async function getHistoryById(userId) {
+    const ticketsRef = ref(database, "Tickets");
+    const ticketsSnapshot = await get(ticketsRef);
+
+    let subObject = {}
+    const tickets = [];
+    if (ticketsSnapshot.exists()) {
+        const ticketPromises = [];
+        ticketsSnapshot.forEach((ticketChild) => {
+            const ticketData = ticketChild.val();
+            if (ticketData.userId == userId) {
+                const eventPromise = readRecord(`Events/${ticketData.eventId}`).then(async (eventRecord) => {
+                    if (eventRecord) {
+                        ticketData.eventDetails = eventRecord;
+                        tickets.push(ticketData);
+                    }
+                });
+                ticketPromises.push(eventPromise);
+            }
+
+        });
+        subObject = {
+            tickets,
+        }
+        await Promise.all(ticketPromises);
+    }
+
+    return subObject;
+}
+
 
 
 
@@ -95,5 +121,6 @@ module.exports = {
     updateRecord,
     deleteRecord,
     getAllRecords,
-    getAttendanceWithEventId
+    getAttendanceWithEventId,
+    getHistoryById
 };
